@@ -1,16 +1,22 @@
-# 使用预装 Maven 和 JDK21 的镜像
-FROM maven:3.9-amazoncorretto-21
+FROM node:22-alpine AS frontend
+WORKDIR /web
+COPY yu-ai-agent-frontend/package*.json ./
+RUN npm ci
+COPY yu-ai-agent-frontend/ ./
+RUN npm run build
+
+FROM maven:3.9-amazoncorretto-21 AS backend
+WORKDIR /build
+COPY recall-server/pom.xml ./pom.xml
+COPY recall-server/src ./src
+COPY --from=frontend /web/dist ./src/main/resources/static
+RUN mvn -B package
+
+FROM amazoncorretto:21-alpine
 WORKDIR /app
-
-# 只复制必要的源代码和配置文件
-COPY pom.xml .
-COPY src ./src
-
-# 使用 Maven 执行打包
-RUN mvn clean package -DskipTests
-
-# 暴露应用端口
+RUN addgroup -S app && adduser -S app -G app && mkdir /app/data && chown -R app:app /app
+COPY --from=backend /build/target/recall-agent-0.1.0.jar /app/app.jar
+USER app
+ENV RECALL_DATA_DIR=/app/data
 EXPOSE 8123
-
-# 使用生产环境配置启动应用
-CMD ["java", "-jar", "/app/target/yu-ai-agent-0.0.1-SNAPSHOT.jar", "--spring.profiles.active=prod"]
+ENTRYPOINT ["java", "-XX:MaxRAMPercentage=70.0", "-jar", "/app/app.jar"]

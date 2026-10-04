@@ -1,0 +1,22 @@
+server:
+  port: ${PORT:8123}
+  error:
+    include-message: never
+spring:
+  application:
+    name: recall-agent
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: true
+recall:
+  data-dir: ${RECALL_DATA_DIR:./data}
+  access-token: ${RECALL_ACCESS_TOKEN:}
+  model-key: ${MODEL_API_KEY:}
+  model-url: ${MODEL_BASE_URL:https://dashscope.aliyuncs.com/compatible-mode/v1}
+  model: ${CHAT_MODEL:qwen-plus}
+  dify-url: ${DIFY_BASE_URL:https://api.dify.ai/v1}
+  dify-key: ${DIFY_API_KEY:}
+  dify-dataset: ${DIFY_DATASET_ID:}
+  ragflow-url: ${RAGFLOW_BASE_URL:}
+  ragflow-key: ${RAGFLOW_API_KEY:}
+  ragflow-dataset: ${RAGFLOW_DATASET_ID:}

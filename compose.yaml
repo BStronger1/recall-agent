@@ -1,0 +1,11 @@
+services:
+  recall:
+    build: .
+    ports:
+      - "127.0.0.1:${WEB_PORT:-8080}:8123"
+    env_file: .env
+    volumes:
+      - recall-data:/app/data
+    restart: unless-stopped
+volumes:
+  recall-data:

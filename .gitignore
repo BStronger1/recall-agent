@@ -1,6 +1,12 @@
 ### CUSTOM ###
 application-local.yml
+.env
+.env.*
+!.env.example
+node_modules/
+**/dist/
 tmp
+data/
 
 HELP.md
 target/

@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: recall-agent
+    runtime: docker
+    plan: starter
+    region: singapore
+    healthCheckPath: /api/health
+    disk:
+      name: recall-memory
+      mountPath: /app/data
+      sizeGB: 1
+    envVars:
+      - key: PORT
+        value: 8123
+      - key: RECALL_ACCESS_TOKEN
+        generateValue: true
+      - key: MODEL_API_KEY
+        sync: false
+      - key: MODEL_BASE_URL
+        value: https://dashscope.aliyuncs.com/compatible-mode/v1
+      - key: CHAT_MODEL
+        value: qwen-plus
