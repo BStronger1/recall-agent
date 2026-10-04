@@ -10,7 +10,7 @@ root = Path(__file__).resolve().parent
 config = json.loads((root / 'credentials.json').read_text())
 workspace = secrets.token_hex(32)
 headers = {'Authorization': 'Bearer ' + config['RECALL_ACCESS_TOKEN'], 'X-Workspace-Key': workspace, 'Content-Type': 'application/json'}
-base = 'http://127.0.0.1:18123/api'
+base = 'http://' + config.get('SERVER_ADDRESS', '127.0.0.1') + ':18123/api'
 
 def call(path, body=None):
     data = None if body is None else json.dumps(body).encode()

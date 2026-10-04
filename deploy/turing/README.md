@@ -40,3 +40,12 @@ post-reboot behavior; no server restart is required for installation.
 
 This setup provides private access over SSH, not a public website. A public
 deployment needs an approved HTTPS reverse proxy/domain and reachable ingress.
+
+For direct campus/VPN access, set `SERVER_ADDRESS` in the private
+`credentials.json` to the server's specific campus IPv4 address and restart the
+service. Use `http://CAMPUS_IP:18123`; routing and firewall rules must permit it.
+Bind to that interface rather than all interfaces. The access token remains
+required. HTTP does not itself encrypt traffic, so use this endpoint only on a
+trusted campus/VPN network; prefer the SSH tunnel for encrypted transport.
+For SSH forwarding after this change, replace the remote `127.0.0.1` in `-L`
+with the campus address. The model API key stays on the server.

@@ -34,7 +34,7 @@ while not stop:
         if not config.get('RECALL_ACCESS_TOKEN'):
             raise RuntimeError('Access token required')
         env = dict(os.environ, **config)
-        env.update(PORT='18123', SERVER_ADDRESS='127.0.0.1', RECALL_DATA_DIR=str(root / 'data'))
+        env.update(PORT='18123', SERVER_ADDRESS=config.get('SERVER_ADDRESS', '127.0.0.1'), RECALL_DATA_DIR=str(root / 'data'))
         java = root / 'runtime' / 'jre21' / 'bin' / 'java'
         child = subprocess.Popen([str(java), '-Xms64m', '-Xmx384m', '-jar', str(root / 'releases' / 'recall-agent.jar')], cwd=root, env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
         for line in child.stdout:

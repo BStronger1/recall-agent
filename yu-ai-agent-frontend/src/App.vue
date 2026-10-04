@@ -173,7 +173,11 @@ async function saveItem() {
     if (demo.value) {
       const item = {
         ...editor.value,
-        id: editor.value.id || crypto.randomUUID(),
+        id:
+          editor.value.id ||
+          Array.from(crypto.getRandomValues(new Uint8Array(16)), (b) =>
+            b.toString(16).padStart(2, "0"),
+          ).join(""),
         updatedAt: new Date().toISOString(),
       };
       state.value[collection] = [
