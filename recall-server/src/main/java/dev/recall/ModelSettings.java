@@ -60,15 +60,16 @@ public class ModelSettings {
         Path file = path(workspace);
         return Files.exists(file) ? mapper.readValue(file.toFile(), Stored.class) : null;
     }
+    boolean accountWorkspace(String workspace) { path(workspace); return Files.exists(root.resolve("accounts").resolve(workspace + ".json")); }
     public synchronized View view(String workspace) throws IOException {
         Stored stored = stored(workspace);
         return stored == null
-            ? new View(false, !env.getProperty("recall.model-key", "").isBlank(), env.getProperty("recall.model-url", ""), env.getProperty("recall.model", ""), List.copyOf(hosts))
+            ? new View(false, !accountWorkspace(workspace) && !env.getProperty("recall.model-key", "").isBlank(), env.getProperty("recall.model-url", ""), env.getProperty("recall.model", ""), List.copyOf(hosts))
             : new View(true, true, stored.baseUrl(), stored.model(), List.copyOf(hosts));
     }
     public synchronized Effective effective(String workspace) throws IOException {
         Stored stored = stored(workspace);
-        if (stored == null) return new Effective(env.getProperty("recall.model-url", ""), env.getProperty("recall.model", ""), env.getProperty("recall.model-key", ""));
+        if (stored == null) return new Effective(env.getProperty("recall.model-url", ""), env.getProperty("recall.model", ""), accountWorkspace(workspace) ? "" : env.getProperty("recall.model-key", ""));
         // Revalidate if the administrator has removed a host since this was saved.
         return new Effective(validateUrl(stored.baseUrl()), stored.model(), decrypt(workspace, stored.encryptedKey()));
     }

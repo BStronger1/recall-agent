@@ -26,6 +26,8 @@ public class AgentService {
         this.modelSettings = modelSettings;
     }
     public Answer chat(String workspace, String question, String provider, boolean useMemory) throws IOException {
+        if (modelSettings.accountWorkspace(workspace) && !Set.of("local", "none").contains(provider))
+            throw new IllegalArgumentException("账号暂仅支持独立的 Local 知识库，不能访问站点共享知识库。");
         var model = modelSettings.effective(workspace);
         String key = model.apiKey();
         if (key.isBlank()) throw new IllegalArgumentException("尚未配置模型。请在设置中填写自己的模型 API。");

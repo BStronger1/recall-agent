@@ -9,6 +9,7 @@ tmp
 data/
 deploy/turing/credentials.json*
 deploy/turing/access-token.txt
+deploy/turing/.accounts-smoke.json
 deploy/turing/runtime/
 deploy/turing/logs/
 deploy/turing/*.lock

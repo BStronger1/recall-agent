@@ -10,6 +10,80 @@ const question = ref("");
 const provider = ref("local");
 const useMemory = ref(true);
 const accessToken = ref(sessionStorage.getItem("recall-token") || "");
+const account = ref(null);
+const authMode = ref("login");
+const authBusy = ref(false);
+const authForm = ref({
+  username: "",
+  password: "",
+  confirm: "",
+  importLegacy: false,
+});
+async function authenticate() {
+  if (authBusy.value) return;
+  if (
+    authMode.value === "register" &&
+    authForm.value.password !== authForm.value.confirm
+  ) {
+    notice.value = "两次输入的密码不一致。";
+    return;
+  }
+  authBusy.value = true;
+  notice.value = "";
+  try {
+    const body = {
+      username: authForm.value.username,
+      password: authForm.value.password,
+    };
+    if (authMode.value === "register" && authForm.value.importLegacy) {
+      body.legacyWorkspace = workspace;
+      body.legacyToken = accessToken.value;
+    }
+    account.value = await api(`/auth/${authMode.value}`, {
+      method: "POST",
+      body: JSON.stringify(body),
+    });
+    authForm.value.password = "";
+    authForm.value.confirm = "";
+    accessToken.value = "";
+    sessionStorage.removeItem("recall-token");
+    await connect();
+  } catch (e) {
+    notice.value = e.message;
+  } finally {
+    authBusy.value = false;
+  }
+}
+async function logout() {
+  authBusy.value = true;
+  try {
+    await api("/auth/logout", { method: "POST" });
+    account.value = null;
+    accessToken.value = "";
+    sessionStorage.removeItem("recall-token");
+    authForm.value.password = "";
+    authForm.value.confirm = "";
+    enterDemo();
+    notice.value = "已退出账号，服务端数据仍保留。";
+  } catch (e) {
+    notice.value = e.message;
+  } finally {
+    authBusy.value = false;
+  }
+}
+function setProviders(items) {
+  providers.value = items.map((p) =>
+    account.value && !["local", "none"].includes(p.id)
+      ? {
+          ...p,
+          ready: false,
+          description: "账号知识库目前使用独立的 Local 检索",
+        }
+      : p,
+  );
+  if (!providers.value.find((p) => p.id === provider.value)?.ready)
+    provider.value = "local";
+}
 let workspace = localStorage.getItem("recall-workspace");
 if (!workspace) {
   workspace = Array.from(crypto.getRandomValues(new Uint8Array(32)), (b) =>
@@ -142,13 +216,19 @@ async function deleteModel() {
   if (
     demo.value ||
     modelBusy.value ||
-    !confirm("删除当前工作区的个人模型密钥，并恢复站点默认模型？")
+    !confirm(
+      account.value
+        ? "删除个人模型密钥？删除后需重新配置才能对话。"
+        : "删除个人模型密钥，并恢复站点默认模型？",
+    )
   )
     return;
   modelBusy.value = true;
   try {
     applyModelView(await api("/model-settings", { method: "DELETE" }));
-    modelFeedback.value = "个人模型密钥已删除，已恢复站点默认配置。";
+    modelFeedback.value = account.value
+      ? "个人密钥已删除。填写新的 API 后即可继续对话。"
+      : "个人模型密钥已删除，已恢复站点默认配置。";
   } catch (e) {
     modelFeedback.value = e.message;
   } finally {
@@ -224,15 +304,29 @@ const titles = {
 async function api(path, options = {}) {
   const response = await fetch(`/api${path}`, {
     ...options,
+    credentials: "same-origin",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken.value}`,
+      "X-Recall-Client": "web",
+      ...(!account.value && accessToken.value && !path.startsWith("/auth/")
+        ? { Authorization: `Bearer ${accessToken.value}` }
+        : {}),
       "X-Workspace-Key": workspace,
     },
   });
   const data = await response.json().catch(() => ({}));
-  if (!response.ok)
+  if (!response.ok) {
+    if (
+      response.status === 401 &&
+      account.value &&
+      !path.startsWith("/auth/")
+    ) {
+      account.value = null;
+      enterDemo();
+      tab.value = "settings";
+    }
     throw new Error(data.error || `请求失败（${response.status}）`);
+  }
   return data;
 }
 async function connect() {
@@ -243,13 +337,14 @@ async function connect() {
       return r.json();
     });
     config.value = cfg;
-    providers.value = cfg.providers;
+    setProviders(cfg.providers);
     state.value = await api("/workspace");
     applyModelView(await api("/model-settings"));
     messages.value = [...state.value.messages];
     demo.value = false;
     evidence.value = null;
-    sessionStorage.setItem("recall-token", accessToken.value);
+    if (!account.value)
+      sessionStorage.setItem("recall-token", accessToken.value);
     sessionStorage.setItem("recall-live", "true");
     notice.value = modelView.value.keyConfigured
       ? "已连接，记忆将保存在服务端。"
@@ -262,8 +357,16 @@ function enterDemo() {
   sessionStorage.removeItem("recall-live");
   demo.value = true;
   modelView.value = null;
-  modelForm.value.apiKey = "";
+  modelForm.value = {
+    baseUrl: "https://www.dmxapi.cn/v1",
+    model: "gpt-4.1-mini",
+    apiKey: "",
+  };
+  modelPreset.value = "dmx";
   modelFeedback.value = "";
+  question.value = "";
+  search.value = "";
+  editor.value = null;
   state.value = structuredClone(seed);
   messages.value = [];
   evidence.value = null;
@@ -415,8 +518,12 @@ onMounted(async () => {
     const response = await fetch("/api/config");
     if (response.ok) {
       config.value = await response.json();
-      providers.value = config.value.providers;
-      if (sessionStorage.getItem("recall-live") === "true") await connect();
+      try {
+        account.value = await api("/auth/me");
+      } catch {}
+      setProviders(config.value.providers);
+      if (account.value || sessionStorage.getItem("recall-live") === "true")
+        await connect();
     }
   } catch {}
 });
@@ -431,7 +538,12 @@ onMounted(async () => {
       >
       <div class="workspace-label">
         <span class="workspace-avatar">B</span>
-        <div>BStronger1<span>Personal AI Collection</span></div>
+        <div>
+          {{ account?.username || "BStronger1"
+          }}<span>{{
+            account ? "我的记忆空间" : "Personal AI Collection"
+          }}</span>
+        </div>
         <span class="workspace-dot"></span>
       </div>
       <p class="nav-label">WORKSPACE</p>
@@ -746,25 +858,154 @@ onMounted(async () => {
         <div class="section-eyebrow">MAKE IT YOURS</div>
         <h1>连接你的 Recall。</h1>
         <p class="page-description">
-          连接工作区后，使用站点默认模型，或接入你自己的 API。
+          注册账号，接入自己的模型 API。记忆与会话跟随账号，换设备也能继续。
         </p>
-        <div class="settings-card">
-          <h2>服务连接</h2>
-          <p>访问口令由站点维护者设置，与模型 API 密钥不同。</p>
-          <label
-            >访问口令<input
-              v-model="accessToken"
-              type="password"
-              autocomplete="off"
-              placeholder="输入 RECALL_ACCESS_TOKEN"
-          /></label>
-          <div class="button-row">
-            <button class="primary-button" @click="connect">连接服务端</button
-            ><button class="small-button" @click="enterDemo">返回演示</button>
-          </div>
-          <p class="muted">
-            口令仅保存在本次浏览器会话；工作区凭据保存在本地浏览器，清理浏览器数据后无法自动找回原工作区。
-          </p>
+        <div class="settings-card model-fields">
+          <h2>{{ account ? "我的账号" : "登录 / 注册" }}</h2>
+          <template v-if="account">
+            <p>
+              已登录：<strong>{{ account.username }}</strong
+              >。记忆、会话和模型配置在你的设备之间同步。
+            </p>
+            <div class="button-row">
+              <button v-if="demo" class="primary-button" @click="connect">
+                进入我的工作区
+              </button>
+              <button
+                class="small-button"
+                :disabled="authBusy || busy || modelBusy"
+                @click="logout"
+              >
+                退出登录
+              </button>
+              <button
+                class="small-button"
+                :disabled="busy || modelBusy"
+                @click="enterDemo"
+              >
+                查看演示
+              </button>
+            </div>
+            <p class="muted">
+              登录最多保留 30 天。在共用电脑使用完毕后请退出登录。
+            </p>
+          </template>
+          <form v-else @submit.prevent="authenticate">
+            <div class="button-row">
+              <button
+                type="button"
+                :class="
+                  authMode === 'login' ? 'primary-button' : 'small-button'
+                "
+                :disabled="authBusy"
+                @click="authMode = 'login'"
+              >
+                登录
+              </button>
+              <button
+                type="button"
+                :class="
+                  authMode === 'register' ? 'primary-button' : 'small-button'
+                "
+                :disabled="authBusy"
+                @click="authMode = 'register'"
+              >
+                创建账号
+              </button>
+            </div>
+            <p>无需向维护者索取口令。注册后填写自己的模型 API 即可开始使用。</p>
+            <p v-if="insecureConnection" class="model-transport">
+              当前是 HTTP 连接。填写密码或 API 密钥建议使用 SSH 加密入口；HTTP
+              本身不保护传输内容。
+            </p>
+            <fieldset :disabled="authBusy">
+              <label
+                >用户名<input
+                  v-model="authForm.username"
+                  required
+                  pattern="[A-Za-z0-9_]{3,32}"
+                  minlength="3"
+                  maxlength="32"
+                  autocomplete="username"
+                  placeholder="3–32 位字母、数字或下划线（不区分大小写）"
+              /></label>
+              <label
+                >密码<input
+                  v-model="authForm.password"
+                  required
+                  type="password"
+                  :minlength="authMode === 'register' ? 12 : 1"
+                  maxlength="128"
+                  :autocomplete="
+                    authMode === 'register'
+                      ? 'new-password'
+                      : 'current-password'
+                  "
+                  placeholder="至少 12 位，请使用独立密码"
+              /></label>
+              <template v-if="authMode === 'register'">
+                <label
+                  >确认密码<input
+                    v-model="authForm.confirm"
+                    required
+                    type="password"
+                    minlength="12"
+                    maxlength="128"
+                    autocomplete="new-password"
+                    placeholder="再次输入密码"
+                /></label>
+                <label class="account-import"
+                  ><input
+                    v-model="authForm.importLegacy"
+                    type="checkbox"
+                  />绑定当前浏览器的旧口令工作区</label
+                >
+                <template v-if="authForm.importLegacy">
+                  <label
+                    >旧网站访问口令<input
+                      v-model="accessToken"
+                      type="password"
+                      required
+                      autocomplete="off"
+                      placeholder="仅迁移旧数据时需要"
+                  /></label>
+                  <p class="muted">
+                    把旧记忆、知识、会话和个人 API
+                    绑定到新账号；绑定后旧口令不能再访问此工作区。站点默认密钥不会转入账号。
+                  </p>
+                </template>
+              </template>
+              <button type="submit" class="primary-button">
+                {{
+                  authBusy
+                    ? "正在处理…"
+                    : authMode === "register"
+                      ? "注册并进入工作区"
+                      : "登录我的工作区"
+                }}
+              </button>
+            </fieldset>
+            <p class="muted">请保存好用户名和密码。目前不提供邮件找回。</p>
+          </form>
+          <details v-if="!account" class="model-hosts">
+            <summary>旧口令工作区入口</summary>
+            <label
+              >旧访问口令<input
+                v-model="accessToken"
+                type="password"
+                autocomplete="off"
+            /></label>
+            <button
+              class="small-button"
+              :disabled="authBusy || busy || modelBusy"
+              @click="connect"
+            >
+              访问旧工作区
+            </button>
+            <p class="muted">
+              新用户直接创建账号；已有数据可在创建账号时绑定。
+            </p>
+          </details>
         </div>
         <form class="settings-card model-fields" @submit.prevent="saveModel">
           <div class="model-card-heading">
@@ -774,7 +1015,9 @@ onMounted(async () => {
                 ? "请先连接工作区"
                 : modelView?.custom
                   ? "个人 API"
-                  : "站点默认"
+                  : account
+                    ? "待配置 API"
+                    : "站点默认"
             }}</span>
           </div>
           <p>
@@ -782,7 +1025,13 @@ onMounted(async () => {
           </p>
           <p v-if="!demo && modelView" class="model-current">
             当前使用：{{ modelView.model || "未配置" }} ·
-            {{ modelView.custom ? "个人配置" : "站点配置" }}
+            {{
+              modelView.custom
+                ? "个人配置"
+                : account
+                  ? "请填写自己的密钥"
+                  : "站点配置"
+            }}
           </p>
           <p v-if="insecureConnection" class="model-transport">
             当前连接为 HTTP，输入密钥不会获得 HTTPS 传输保护。请在可信校园/VPN
@@ -852,7 +1101,7 @@ onMounted(async () => {
             {{ modelFeedback }}
           </p>
           <p v-if="demo" class="muted">
-            先在上方填写网站访问口令并连接服务端，再设置个人模型。
+            先在上方注册或登录账号，再设置个人模型。
           </p>
           <p class="muted">
             测试会发送一条简短请求，可能消耗少量 API 额度。仅支持 Chat
@@ -881,8 +1130,8 @@ onMounted(async () => {
         <div class="settings-card">
           <h2>知识库连接</h2>
           <p>
-            Dify 与 RAGFlow 的连接地址、密钥和数据集 ID
-            由环境变量配置。未配置的连接器不可选用。
+            账号的 Local 知识库独立保存。站点级 Dify / RAGFlow
+            连接器暂不向自助注册账号开放。
           </p>
           <a
             class="text-button"

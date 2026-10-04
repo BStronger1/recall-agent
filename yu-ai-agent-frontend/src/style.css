@@ -1213,3 +1213,13 @@ main {
 .model-hosts p {
   margin-top: 8px;
 }
+.settings-card .account-import {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.settings-card .account-import input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+}
