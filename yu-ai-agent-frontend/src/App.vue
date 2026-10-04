@@ -138,6 +138,7 @@ async function connect() {
     demo.value = false;
     evidence.value = null;
     sessionStorage.setItem("recall-token", accessToken.value);
+    sessionStorage.setItem("recall-live", "true");
     notice.value = cfg.modelReady
       ? "已连接，记忆将保存在服务端。"
       : "已连接存储；配置 MODEL_API_KEY 后可开始对话。";
@@ -146,6 +147,7 @@ async function connect() {
   }
 }
 function enterDemo() {
+  sessionStorage.removeItem("recall-live");
   demo.value = true;
   state.value = structuredClone(seed);
   messages.value = [];
@@ -295,6 +297,7 @@ onMounted(async () => {
     if (response.ok) {
       config.value = await response.json();
       providers.value = config.value.providers;
+      if (sessionStorage.getItem("recall-live") === "true") await connect();
     }
   } catch {}
 });

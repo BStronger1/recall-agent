@@ -7,6 +7,11 @@ node_modules/
 **/dist/
 tmp
 data/
+deploy/turing/credentials.json*
+deploy/turing/access-token.txt
+deploy/turing/runtime/
+deploy/turing/logs/
+deploy/turing/*.lock
 
 HELP.md
 target/
