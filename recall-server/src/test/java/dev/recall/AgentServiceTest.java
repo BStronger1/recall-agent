@@ -18,8 +18,11 @@ class AgentServiceTest {
         store.save(workspace, "memories", null, "language", "Chinese", "preference");
         store.save(workspace, "documents", null, "Java", "Java is a programming language", "document");
         when(http.post(anyString(), anyString(), any())).thenReturn(mapper.readTree("{\"choices\":[{\"message\":{\"content\":\"answer [K1]\"}}]}"));
-        var agent = new AgentService(store, new Retrieval(env, http), http, env);
+        var settings = new ModelSettings(temp.toString(), mapper, env);
+        settings.save(workspace, "https://api.openai.com/v1", "personal-model", "personal-test-key");
+        var agent = new AgentService(store, new Retrieval(env, http), http, env, settings);
         var answer = agent.chat(workspace, "Java", "local", true);
+        verify(http).post(eq("https://api.openai.com/v1/chat/completions"), eq("personal-test-key"), argThat(body -> ((Map<?,?>) body).get("model").equals("personal-model")));
         assertEquals(1, answer.memories().size()); assertEquals(1, answer.sources().size()); assertEquals(2, store.read(workspace).messages().size());
         assertTrue(agent.chat(workspace, "Java", "none", false).memories().isEmpty());
         when(http.post(anyString(), anyString(), any())).thenThrow(new IllegalStateException("offline"));

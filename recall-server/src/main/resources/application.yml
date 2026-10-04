@@ -14,6 +14,7 @@ recall:
   model-key: ${MODEL_API_KEY:}
   model-url: ${MODEL_BASE_URL:https://dashscope.aliyuncs.com/compatible-mode/v1}
   model: ${CHAT_MODEL:qwen-plus}
+  allowed-model-hosts: ${RECALL_ALLOWED_MODEL_HOSTS:api.openai.com,api.deepseek.com,dashscope.aliyuncs.com,dashscope-intl.aliyuncs.com,api.siliconflow.cn,www.dmxapi.cn,api.moonshot.cn,open.bigmodel.cn}
   dify-url: ${DIFY_BASE_URL:https://api.dify.ai/v1}
   dify-key: ${DIFY_API_KEY:}
   dify-dataset: ${DIFY_DATASET_ID:}

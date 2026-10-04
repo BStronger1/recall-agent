@@ -1151,3 +1151,65 @@ main {
     font-size: 11px;
   }
 }
+.model-fields fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+.model-fields select {
+  border: 1px solid #d5dfcb;
+  border-radius: 6px;
+  padding: 10px 12px;
+  background: #fff;
+  color: #405b34;
+  width: 100%;
+}
+.model-fields fieldset:disabled {
+  opacity: 0.55;
+}
+.model-card-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.model-card-heading h2 {
+  margin-bottom: 0;
+}
+.model-fields .button-row {
+  flex-wrap: wrap;
+}
+.model-fields .model-transport {
+  margin-top: 14px;
+  padding: 10px 12px;
+  border-radius: 7px;
+  background: #f5eedd;
+  color: #887144;
+  font-size: 11px;
+}
+.model-fields .model-current {
+  margin-top: 9px;
+  color: #507545;
+  font-size: 12px;
+}
+.model-fields .model-feedback {
+  margin: 12px 0;
+  padding: 12px;
+  background: #edf3e5;
+  border-radius: 7px;
+  color: #4e6c3b;
+}
+.model-hosts {
+  margin-top: 14px;
+  color: #8e9b80;
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+.model-hosts summary {
+  cursor: pointer;
+}
+.model-hosts p {
+  margin-top: 8px;
+}

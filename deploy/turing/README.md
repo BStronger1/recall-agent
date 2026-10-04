@@ -49,3 +49,14 @@ required. HTTP does not itself encrypt traffic, so use this endpoint only on a
 trusted campus/VPN network; prefer the SSH tunnel for encrypted transport.
 For SSH forwarding after this change, replace the remote `127.0.0.1` in `-L`
 with the campus address. The model API key stays on the server.
+
+Users can connect with the site token and then set their own compatible model
+in Settings. Personal settings override the site default in that workspace.
+Model keys are encrypted in `data/<workspace>.model.json` using the persistent
+`data/.model-encryption-key`. Back up the whole private data directory, including
+this hidden file; losing it makes saved personal keys unreadable. Keep directory
+permissions private. Users should submit keys over HTTPS or the SSH tunnel.
+The connection test makes a short billable request without saving settings.
+`python3 smoke-model-settings.py` verifies personal settings with the existing
+site credentials in a synthetic workspace, then removes its test data. It makes
+two model requests and never prints keys.

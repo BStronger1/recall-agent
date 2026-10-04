@@ -30,4 +30,22 @@ class ApiTest {
         mvc.perform(post("/api/memories").headers(headers).contentType("application/json").content("{\"title\":\"language\",\"content\":\"Chinese\",\"kind\":\"preference\"}")).andExpect(status().isOk()).andExpect(jsonPath("$.memories[0].content").value("Chinese"));
         mvc.perform(post("/api/chat").headers(headers).contentType("application/json").content("{\"message\":\"hello\",\"provider\":\"local\",\"useMemory\":true}")).andExpect(status().isBadRequest());
     }
+    @Test void modelSettingsRequireAuthAndNeverReturnKeys() throws Exception {
+        mvc.perform(get("/api/model-settings")).andExpect(status().isUnauthorized());
+        mvc.perform(put("/api/model-settings")).andExpect(status().isUnauthorized());
+        mvc.perform(post("/api/model-settings/test")).andExpect(status().isUnauthorized());
+        mvc.perform(delete("/api/model-settings")).andExpect(status().isUnauthorized());
+        var headers = new org.springframework.http.HttpHeaders(); headers.setBearerAuth("test-only-token"); headers.set("X-Workspace-Key", "e".repeat(64));
+        mvc.perform(put("/api/model-settings").headers(headers).contentType("application/json")
+            .content("{\"baseUrl\":\"https://api.openai.com/v1\",\"model\":\"mine\",\"apiKey\":\"private-test-value\"}"))
+            .andExpect(status().isOk()).andExpect(jsonPath("$.custom").value(true)).andExpect(jsonPath("$.apiKey").doesNotExist())
+            .andExpect(content().string(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("private-test-value"))));
+        mvc.perform(get("/api/model-settings").headers(headers)).andExpect(jsonPath("$.model").value("mine"))
+            .andExpect(jsonPath("$.encryptedKey").doesNotExist()).andExpect(jsonPath("$.apiKey").doesNotExist());
+        mvc.perform(get("/api/workspace").headers(headers)).andExpect(content().string(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("private-test-value"))));
+        headers.set("X-Workspace-Key", "f".repeat(64));
+        mvc.perform(get("/api/model-settings").headers(headers)).andExpect(jsonPath("$.custom").value(false));
+        headers.set("X-Workspace-Key", "e".repeat(64));
+        mvc.perform(delete("/api/model-settings").headers(headers)).andExpect(status().isOk()).andExpect(jsonPath("$.custom").value(false));
+    }
 }

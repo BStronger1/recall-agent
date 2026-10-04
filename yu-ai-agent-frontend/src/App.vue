@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 
 const homeUrl = import.meta.env.BASE_URL;
 const tab = ref("chat");
@@ -44,6 +44,117 @@ const providers = ref([
   },
 ]);
 const config = ref({ modelReady: false, accessReady: false });
+const modelView = ref(null);
+const modelBusy = ref(false);
+const modelFeedback = ref("");
+const modelForm = ref({
+  baseUrl: "https://www.dmxapi.cn/v1",
+  model: "gpt-4.1-mini",
+  apiKey: "",
+});
+const modelPreset = ref("dmx");
+const insecureConnection = !window.isSecureContext;
+const modelPresets = [
+  {
+    id: "dmx",
+    name: "DMXAPI",
+    baseUrl: "https://www.dmxapi.cn/v1",
+    model: "gpt-4.1-mini",
+  },
+  {
+    id: "openai",
+    name: "OpenAI",
+    baseUrl: "https://api.openai.com/v1",
+    model: "gpt-4.1-mini",
+  },
+  {
+    id: "deepseek",
+    name: "DeepSeek",
+    baseUrl: "https://api.deepseek.com/v1",
+    model: "deepseek-chat",
+  },
+  {
+    id: "dashscope",
+    name: "阿里云百炼",
+    baseUrl: "https://dashscope.aliyuncs.com/compatible-mode/v1",
+    model: "qwen-plus",
+  },
+  { id: "custom", name: "其他兼容接口" },
+];
+watch(
+  modelForm,
+  () => {
+    modelFeedback.value = "";
+  },
+  { deep: true, flush: "sync" },
+);
+function applyModelView(view) {
+  modelView.value = view;
+  modelForm.value = { baseUrl: view.baseUrl, model: view.model, apiKey: "" };
+  modelPreset.value =
+    modelPresets.find((p) => p.baseUrl === view.baseUrl)?.id || "custom";
+}
+function changeModelPreset() {
+  const preset = modelPresets.find((p) => p.id === modelPreset.value);
+  if (preset?.baseUrl)
+    modelForm.value = {
+      baseUrl: preset.baseUrl,
+      model: preset.model,
+      apiKey: "",
+    };
+  modelFeedback.value = "";
+}
+async function saveModel() {
+  if (demo.value || modelBusy.value) return;
+  modelBusy.value = true;
+  try {
+    applyModelView(
+      await api("/model-settings", {
+        method: "PUT",
+        body: JSON.stringify(modelForm.value),
+      }),
+    );
+    modelFeedback.value =
+      "已保存个人模型。下一条消息使用你的 API；密钥输入已清空。";
+  } catch (e) {
+    modelFeedback.value = e.message;
+  } finally {
+    modelBusy.value = false;
+  }
+}
+async function testModel() {
+  if (demo.value || modelBusy.value) return;
+  modelBusy.value = true;
+  modelFeedback.value = "正在发送一条简短测试请求…";
+  try {
+    const result = await api("/model-settings/test", {
+      method: "POST",
+      body: JSON.stringify(modelForm.value),
+    });
+    modelFeedback.value = result.message;
+  } catch (e) {
+    modelFeedback.value = e.message;
+  } finally {
+    modelBusy.value = false;
+  }
+}
+async function deleteModel() {
+  if (
+    demo.value ||
+    modelBusy.value ||
+    !confirm("删除当前工作区的个人模型密钥，并恢复站点默认模型？")
+  )
+    return;
+  modelBusy.value = true;
+  try {
+    applyModelView(await api("/model-settings", { method: "DELETE" }));
+    modelFeedback.value = "个人模型密钥已删除，已恢复站点默认配置。";
+  } catch (e) {
+    modelFeedback.value = e.message;
+  } finally {
+    modelBusy.value = false;
+  }
+}
 const seed = {
   memories: [
     {
@@ -134,14 +245,15 @@ async function connect() {
     config.value = cfg;
     providers.value = cfg.providers;
     state.value = await api("/workspace");
+    applyModelView(await api("/model-settings"));
     messages.value = [...state.value.messages];
     demo.value = false;
     evidence.value = null;
     sessionStorage.setItem("recall-token", accessToken.value);
     sessionStorage.setItem("recall-live", "true");
-    notice.value = cfg.modelReady
+    notice.value = modelView.value.keyConfigured
       ? "已连接，记忆将保存在服务端。"
-      : "已连接存储；配置 MODEL_API_KEY 后可开始对话。";
+      : "已连接存储；在下方填写自己的模型 API 即可开始对话。";
   } catch (e) {
     notice.value = e.message;
   }
@@ -149,6 +261,9 @@ async function connect() {
 function enterDemo() {
   sessionStorage.removeItem("recall-live");
   demo.value = true;
+  modelView.value = null;
+  modelForm.value.apiKey = "";
+  modelFeedback.value = "";
   state.value = structuredClone(seed);
   messages.value = [];
   evidence.value = null;
@@ -631,7 +746,7 @@ onMounted(async () => {
         <div class="section-eyebrow">MAKE IT YOURS</div>
         <h1>连接你的 Recall。</h1>
         <p class="page-description">
-          演示无需密钥。真实对话使用服务端配置的模型与持久存储。
+          连接工作区后，使用站点默认模型，或接入你自己的 API。
         </p>
         <div class="settings-card">
           <h2>服务连接</h2>
@@ -651,6 +766,104 @@ onMounted(async () => {
             口令仅保存在本次浏览器会话；工作区凭据保存在本地浏览器，清理浏览器数据后无法自动找回原工作区。
           </p>
         </div>
+        <form class="settings-card model-fields" @submit.prevent="saveModel">
+          <div class="model-card-heading">
+            <h2>我的大模型</h2>
+            <span class="tag">{{
+              demo
+                ? "请先连接工作区"
+                : modelView?.custom
+                  ? "个人 API"
+                  : "站点默认"
+            }}</span>
+          </div>
+          <p>
+            配置只对当前工作区生效。你自己的模型调用使用你填写的 API 账户额度。
+          </p>
+          <p v-if="!demo && modelView" class="model-current">
+            当前使用：{{ modelView.model || "未配置" }} ·
+            {{ modelView.custom ? "个人配置" : "站点配置" }}
+          </p>
+          <p v-if="insecureConnection" class="model-transport">
+            当前连接为 HTTP，输入密钥不会获得 HTTPS 传输保护。请在可信校园/VPN
+            网络使用，或改用 SSH 加密入口。
+          </p>
+          <fieldset :disabled="demo || modelBusy || busy">
+            <label
+              >服务商<select v-model="modelPreset" @change="changeModelPreset">
+                <option
+                  v-for="preset in modelPresets"
+                  :key="preset.id"
+                  :value="preset.id"
+                >
+                  {{ preset.name }}
+                </option>
+              </select></label
+            >
+            <label
+              >API 地址<input
+                v-model="modelForm.baseUrl"
+                type="url"
+                maxlength="500"
+                required
+                placeholder="https://api.example.com/v1"
+                autocomplete="off"
+            /></label>
+            <label
+              >模型名称<input
+                v-model="modelForm.model"
+                maxlength="160"
+                required
+                placeholder="填写服务商提供的准确模型名"
+                autocomplete="off"
+            /></label>
+            <label
+              >API 密钥<input
+                v-model="modelForm.apiKey"
+                type="password"
+                maxlength="4096"
+                autocomplete="off"
+                spellcheck="false"
+                :placeholder="
+                  modelView?.custom
+                    ? '已保存；留空保留原密钥，更换地址需重新填写'
+                    : '输入你自己的 API 密钥'
+                "
+            /></label>
+            <p class="muted">
+              密钥加密保存在服务端，不回显、不写入浏览器存储、不包含在导出数据中。
+            </p>
+            <div class="button-row">
+              <button type="button" class="small-button" @click="testModel">
+                测试连接</button
+              ><button type="submit" class="primary-button">保存并使用</button
+              ><button
+                v-if="modelView?.custom"
+                type="button"
+                class="small-button"
+                @click="deleteModel"
+              >
+                删除个人配置
+              </button>
+            </div>
+          </fieldset>
+          <p v-if="modelBusy" class="muted" role="status">正在处理，请稍候…</p>
+          <p v-if="modelFeedback" class="model-feedback" role="status">
+            {{ modelFeedback }}
+          </p>
+          <p v-if="demo" class="muted">
+            先在上方填写网站访问口令并连接服务端，再设置个人模型。
+          </p>
+          <p class="muted">
+            测试会发送一条简短请求，可能消耗少量 API 额度。仅支持 Chat
+            Completions 兼容接口。
+          </p>
+          <details v-if="modelView" class="model-hosts">
+            <summary>可用接口域名</summary>
+            <p>{{ modelView.allowedHosts.join("、") }}</p>
+            <p>其他域名需要站点维护者添加后才能使用。</p>
+          </details>
+        </form>
         <div class="settings-card">
           <h2>数据与记忆</h2>
           <p>
@@ -666,10 +879,10 @@ onMounted(async () => {
           </div>
         </div>
         <div class="settings-card">
-          <h2>模型与 RAG</h2>
+          <h2>知识库连接</h2>
           <p>
-            模型兼容 Chat Completions 接口。Dify 与 RAGFlow
-            的连接地址、密钥和数据集 ID 由环境变量配置。未配置的连接器不可选用。
+            Dify 与 RAGFlow 的连接地址、密钥和数据集 ID
+            由环境变量配置。未配置的连接器不可选用。
           </p>
           <a
             class="text-button"
