@@ -23,7 +23,7 @@ public class ModelSettings {
     public record Effective(String baseUrl, String model, String apiKey) {
         @Override public String toString() { return "Effective[credentials redacted]"; }
     }
-    record Stored(String baseUrl, String model, String encryptedKey) {}
+    record Stored(String baseUrl, String model, String encryptedKey, Double minSimilarity) {}
     private final Path root;
     private final ObjectMapper mapper;
     private final Environment env;
@@ -97,8 +97,15 @@ public class ModelSettings {
         return new Effective(url, model.strip(), key);
     }
     public synchronized View save(String workspace, String baseUrl, String model, String apiKey) throws IOException {
+        return save(workspace, baseUrl, model, apiKey, null);
+    }
+    public synchronized double minSimilarity(String workspace) throws IOException {
+        var saved = stored(workspace); return saved == null || saved.minSimilarity() == null ? .55 : saved.minSimilarity();
+    }
+    public synchronized View save(String workspace, String baseUrl, String model, String apiKey, Double minSimilarity) throws IOException {
+        if (minSimilarity != null && (!Double.isFinite(minSimilarity) || minSimilarity < 0 || minSimilarity > 1)) throw new IllegalArgumentException("相似度阈值必须在 0 到 1 之间。");
         Effective candidate = candidate(workspace, baseUrl, model, apiKey);
-        var stored = new Stored(candidate.baseUrl(), candidate.model(), encrypt(workspace, candidate.apiKey()));
+        var stored = new Stored(candidate.baseUrl(), candidate.model(), encrypt(workspace, candidate.apiKey()), minSimilarity);
         Path tmp = Files.createTempFile(root, "model-", ".tmp");
         try {
             privateFile(tmp); mapper.writeValue(tmp.toFile(), stored);

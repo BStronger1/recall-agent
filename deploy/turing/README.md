@@ -71,3 +71,22 @@ recall and logout. It removes its synthetic data; restart the application once
 more to clear the deleted test account from memory. A private temporary file
 holds test credentials between phases and is removed by verification. Never
 commit that file. The test makes one model request using existing site credentials.
+
+## Memory upgrade acceptance
+
+`smoke-memory-upgrade.py` exercises independent embedding credentials, semantic
+paraphrase recall, changed memories, empty-evidence abstention, citation checks,
+workspace isolation, reviewed memory updates, provenance, undo and deletion.
+It uses the existing private DMXAPI credentials with `bge-m3` and the requested
+chat model (`--model`, default `DMXAPI-deepseek-v4-flash`). It performs real,
+potentially billable calls, uses only two synthetic workspaces and removes their
+files in `finally`. Results contain synthetic data only and are saved in `reports/`.
+
+Use `--staging` only when a separate candidate JVM is already listening on
+127.0.0.1:18124 with `RECALL_DATA_DIR=<application directory>/validation-data`.
+Otherwise it tests the normal configured campus address on port 18123.
+Back up the full private `data/` directory before upgrading: workspace JSON now
+contains proposals, revisions and extraction policy, and encrypted model settings
+may contain an embedding similarity threshold. Old binaries may not understand
+these new fields; rollback requires the corresponding pre-upgrade data snapshot.
+Preserve `data/embeddings/.model-encryption-key` with the other encryption key.

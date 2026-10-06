@@ -9,6 +9,33 @@ const notice = ref("");
 const question = ref("");
 const provider = ref("local");
 const useMemory = ref(true);
+const grounded = ref(true);
+const embeddingView = ref(null);
+const embeddingForm = ref({ baseUrl: "https://www.dmxapi.cn/v1", model: "bge-m3", apiKey: "", minSimilarity: 0.55 });
+const embeddingBusy = ref(false);
+const embeddingFeedback = ref("");
+const memoryBusy = ref(false);
+function applyEmbedding(view) {
+  embeddingView.value = view;
+  embeddingForm.value = { baseUrl: view.baseUrl || "https://www.dmxapi.cn/v1", model: view.model || "bge-m3", apiKey: "", minSimilarity: view.minSimilarity ?? 0.55 };
+}
+async function saveEmbedding(remove = false) {
+  if (demo.value || embeddingBusy.value) return;
+  embeddingBusy.value = true;
+  embeddingFeedback.value = "正在检查向量接口…";
+  try {
+    applyEmbedding(await api("/retrieval-settings", { method: remove ? "DELETE" : "PUT", ...(remove ? {} : { body: JSON.stringify(embeddingForm.value) }) }));
+    embeddingFeedback.value = remove ? "已停用向量检索，保留关键词检索。" : "向量接口已验证并保存，下一次检索自动融合关键词和语义结果。";
+  } catch (e) { embeddingFeedback.value = e.message; }
+  finally { embeddingBusy.value = false; }
+}
+async function memoryAction(path, body, method = "POST") {
+  if (demo.value || memoryBusy.value) return;
+  memoryBusy.value = true;
+  try { state.value = await api(path, { method, body: JSON.stringify(body) }); }
+  catch (e) { notice.value = e.message; }
+  finally { memoryBusy.value = false; }
+}
 const accessToken = ref(sessionStorage.getItem("recall-token") || "");
 const account = ref(null);
 const authMode = ref("login");
@@ -340,6 +367,7 @@ async function connect() {
     setProviders(cfg.providers);
     state.value = await api("/workspace");
     applyModelView(await api("/model-settings"));
+    applyEmbedding(await api("/retrieval-settings"));
     messages.value = [...state.value.messages];
     demo.value = false;
     evidence.value = null;
@@ -357,6 +385,9 @@ function enterDemo() {
   sessionStorage.removeItem("recall-live");
   demo.value = true;
   modelView.value = null;
+  embeddingView.value = null;
+  embeddingForm.value = { baseUrl: "https://www.dmxapi.cn/v1", model: "bge-m3", apiKey: "", minSimilarity: 0.55 };
+  embeddingFeedback.value = "";
   modelForm.value = {
     baseUrl: "https://www.dmxapi.cn/v1",
     model: "gpt-4.1-mini",
@@ -463,10 +494,13 @@ async function send() {
         message: text,
         provider: provider.value,
         useMemory: useMemory.value,
+        grounded: grounded.value,
       }),
     });
     messages.value.push({ role: "assistant", content: data.answer });
     evidence.value = data;
+    try { state.value = await api("/workspace"); }
+    catch { notice.value = "回答已完成；工作区刷新失败，请重新连接以查看候选记忆。"; }
   } catch (e) {
     messages.value.pop();
     question.value = text;
@@ -664,6 +698,10 @@ onMounted(async () => {
               @keydown.ctrl.enter.prevent="send"
             ></textarea>
             <div class="composer-toolbar">
+              <select v-model="grounded" aria-label="回答模式" :disabled="busy">
+                <option :value="true">资料问答 · 核验证据</option>
+                <option :value="false">通用对话 · 可用常识</option>
+              </select>
               <label class="memory-toggle"
                 ><input v-model="useMemory" type="checkbox" /> 长期记忆
                 <span>{{ useMemory ? "ON" : "OFF" }}</span></label
@@ -690,7 +728,7 @@ onMounted(async () => {
             {{
               demo
                 ? "演示空间与真实数据独立 · 示例不消耗模型额度"
-                : "只有显式保存的内容会成为长期记忆 · 回答请结合来源核对"
+                : grounded ? "资料不足时先澄清 · 核验可能增加耗时与模型用量 · 开放问题可切换通用对话" : "通用对话仅检查引用编号 · 新记忆需到记忆空间确认保存"
             }}
           </p>
         </div>
@@ -700,6 +738,9 @@ onMounted(async () => {
             <span>CONTEXT</span>
           </div>
           <p class="panel-description">看见回答背后的记忆与依据。</p>
+          <p v-if="evidence?.verification" class="verification-badge" role="status">
+            {{ { no_evidence: "证据不足 · 已澄清", blocked: "核验未通过 · 已拦截", unverified: "核验不可用 · 已澄清", model_checked: "已做模型核验 · 请核对来源", citations_only: "仅引用编号校验" }[evidence.verification] }}
+          </p>
           <div class="context-stat">
             <span>长期记忆</span
             ><strong>{{
@@ -793,6 +834,33 @@ onMounted(async () => {
           <button class="primary-button" @click="openEditor()">
             ＋ {{ tab === "memories" ? "添加记忆" : "添加文本" }}
           </button>
+        </div>
+        <div v-if="tab === 'memories'" class="memory-review">
+          <label class="memory-toggle"><input type="checkbox" :checked="state.autoExtract" :disabled="demo || busy || memoryBusy" @change="memoryAction('/memory-policy', { autoExtract: $event.target.checked }, 'PUT')" />对话后提取候选记忆（可选）</label>
+          <p class="muted">开启后会增加一次模型调用。候选只来自用户原话，可能提取不准；确认后才会保存。请勿把密钥等敏感信息发送到对话。</p>
+          <h2>待审核 <span>{{ state.proposals?.length || 0 }}</span></h2>
+          <article v-for="proposal in state.proposals || []" :key="proposal.id" class="review-card">
+            <strong>{{ proposal.before ? "更新建议" : "新增建议" }} · {{ proposal.title }}</strong>
+            <p v-if="proposal.before">修改前：{{ proposal.before.content }}</p>
+            <p>建议内容：{{ proposal.content }}</p>
+            <blockquote>原话：{{ proposal.sourceQuote }}</blockquote>
+            <div class="button-row">
+              <button class="small-button" :disabled="memoryBusy || busy" @click="memoryAction(`/memory-proposals/${proposal.id}`, { accept: true })">确认保存</button>
+              <button class="small-button" :disabled="memoryBusy || busy" @click="memoryAction(`/memory-proposals/${proposal.id}`, { accept: false })">丢弃</button>
+            </div>
+          </article>
+          <p v-if="!state.proposals?.length" class="muted">暂无待审核候选。已保存的记忆见下方。</p>
+          <details class="revision-list">
+            <summary>版本与来源（{{ state.revisions?.length || 0 }} 条，最多保留最近 100 条）</summary>
+            <article v-for="revision in [...(state.revisions || [])].reverse()" :key="revision.id" class="review-card">
+              <strong>{{ revision.after.title }} · {{ revision.undone ? "已撤销" : "已保存" }}</strong>
+              <p>保存时间：{{ revision.changedAt }}</p>
+              <p v-if="revision.before">此前版本：{{ revision.before.content }}（{{ revision.before.updatedAt }}）</p>
+              <p>本次内容：{{ revision.after.content }}</p>
+              <blockquote>来源：{{ revision.sourceQuote }}</blockquote>
+              <button v-if="!revision.undone" class="small-button" :disabled="memoryBusy || busy || !state.memories.some(m => m.id === revision.after.id && m.updatedAt === revision.after.updatedAt)" @click="memoryAction(`/memory-revisions/${revision.id}/undo`, {})">撤销此变更</button>
+            </article>
+          </details>
         </div>
         <div v-if="tab === 'knowledge'" class="provider-grid">
           <button
@@ -1113,11 +1181,29 @@ onMounted(async () => {
             <p>其他域名需要站点维护者添加后才能使用。</p>
           </details>
         </form>
+        <form class="settings-card model-fields" @submit.prevent="saveEmbedding(false)">
+          <h2>语义检索</h2>
+          <p>当前：{{ embeddingView?.custom ? '关键词 + 向量混合检索' : '关键词检索' }}。向量模型与聊天模型独立配置，仅对你的工作区生效。</p>
+          <p class="muted">启用后，检索问题及相关记忆、知识文本会发送到此接口。保存时发送一条检查请求，首次检索还会生成资料向量，可能消耗额度。</p>
+          <fieldset :disabled="demo || embeddingBusy || busy">
+            <label>向量 API 地址<input v-model="embeddingForm.baseUrl" type="url" required maxlength="500" /></label>
+            <label>Embedding 模型<input v-model="embeddingForm.model" required maxlength="160" placeholder="使用服务商支持的向量模型名" /></label>
+            <label>语义相似度阈值<input v-model.number="embeddingForm.minSimilarity" type="number" min="0" max="1" step="0.01" required /></label>
+            <p class="muted">阈值越低召回越多，也可能引入无关内容；不同向量模型需分别验证。初始 0.55 可作为 bge-m3 的测试起点。</p>
+            <label>向量 API 密钥<input v-model="embeddingForm.apiKey" type="password" autocomplete="off" maxlength="4096" :placeholder="embeddingView?.custom ? '留空保留；更换地址需重新填写' : '输入向量服务密钥'" /></label>
+            <div class="button-row">
+              <button class="primary-button" type="submit">验证并启用混合检索</button>
+              <button v-if="embeddingView?.custom" class="small-button" type="button" @click="saveEmbedding(true)">停用并删除密钥</button>
+            </div>
+          </fieldset>
+          <p v-if="embeddingFeedback" role="status">{{ embeddingFeedback }}</p>
+          <p class="muted">向量服务不可用时会回退关键词检索，并在执行记录中提示。只支持站点允许域名的兼容 embeddings 接口。</p>
+        </form>
         <div class="settings-card">
           <h2>数据与记忆</h2>
           <p>
-            长期记忆由你手动管理，当前会话保留最近 20
-            条消息。删除记忆不会自动清除历史对话。
+            长期记忆由你手动保存或审核候选后保存，当前会话保留最近 20 条消息。
+            删除记忆会清除该条的版本记录与更新候选；不会自动清除历史对话或你已导出的文件。
           </p>
           <div class="button-row">
             <button class="small-button" @click="exportData">

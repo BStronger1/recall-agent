@@ -15,6 +15,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class ApiTest {
     @Autowired MockMvc mvc;
+    @Test void newMemoryAndRetrievalEndpointsRequireAuthAndValidateInput() throws Exception {
+        mvc.perform(get("/api/retrieval-settings")).andExpect(status().isUnauthorized());
+        mvc.perform(put("/api/memory-policy")).andExpect(status().isUnauthorized());
+        mvc.perform(post("/api/memory-proposals/x")).andExpect(status().isUnauthorized());
+        var headers = new org.springframework.http.HttpHeaders(); headers.setBearerAuth("test-only-token"); headers.set("X-Workspace-Key","8".repeat(64));
+        mvc.perform(get("/api/retrieval-settings").headers(headers)).andExpect(status().isOk()).andExpect(jsonPath("$.keyConfigured").value(false));
+        mvc.perform(put("/api/retrieval-settings").headers(headers).contentType("application/json").content("{\"baseUrl\":\"https://localhost/v1\",\"model\":\"test\",\"apiKey\":\"test-test-key\"}")).andExpect(status().isBadRequest());
+        mvc.perform(put("/api/retrieval-settings").headers(headers).contentType("application/json").content("{\"baseUrl\":\"https://www.dmxapi.cn/v1\",\"model\":\"test\",\"apiKey\":\"test-test-key\",\"minSimilarity\":2}")).andExpect(status().isBadRequest());
+        mvc.perform(put("/api/memory-policy").headers(headers).contentType("application/json").content("{\"autoExtract\":true}")).andExpect(status().isOk()).andExpect(jsonPath("$.autoExtract").value(true));
+        mvc.perform(post("/api/memory-proposals/missing").headers(headers).contentType("application/json").content("{\"accept\":true}")).andExpect(status().isBadRequest());
+    }
     @DynamicPropertySource static void data(DynamicPropertyRegistry registry) throws Exception {
         String dir = Files.createTempDirectory("recall-test-").toString(); registry.add("recall.data-dir", () -> dir);
     }

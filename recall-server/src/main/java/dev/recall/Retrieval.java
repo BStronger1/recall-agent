@@ -46,8 +46,11 @@ public class Retrieval {
         return sources;
     }
     public static String clip(String text, int size) { return text.length() > size ? text.substring(0, size) : text; }
-    private static Set<String> tokens(String text) {
-        Set<String> tokens = new HashSet<>();
+    static Set<String> tokens(String text) {
+        return new HashSet<>(terms(text));
+    }
+    static List<String> terms(String text) {
+        List<String> tokens = new ArrayList<>();
         var matcher = Pattern.compile("[a-z0-9_]+|[\\p{IsHan}]+", Pattern.CASE_INSENSITIVE).matcher(text.toLowerCase(Locale.ROOT));
         while (matcher.find()) {
             String word = matcher.group();

@@ -1,0 +1,336 @@
+{
+  "date": "2026-10-06",
+  "release_sha256": "53a29a35e3f89ec1dcecf20c2bf6d71751cf4efb06835ab8b9a7de8d15495e51",
+  "backend_tests": {
+    "passed": 33,
+    "total": 33
+  },
+  "frontend_build": "passed",
+  "browser": {
+    "passed": true,
+    "checks": [
+      "connect",
+      "create memory",
+      "edit memory",
+      "undo version",
+      "opt in extraction",
+      "embedding settings visible",
+      "mobile no horizontal overflow",
+      "no page exceptions"
+    ]
+  },
+  "production_live": {
+    "model": "DMXAPI-deepseek-v4-flash",
+    "embedding": "bge-m3",
+    "staging": false,
+    "cases": [
+      {
+        "name": "empty_evidence_abstention",
+        "passed": true,
+        "details": {
+          "answer": "不知道。目前没有足够的可用依据。请补充或保存相关资料；如果有多个项目，请说明你指哪一个。",
+          "sources": [],
+          "memories": [],
+          "trace": [
+            "关键词 BM25",
+            "读取最近 0 条会话消息",
+            "召回 0 条长期记忆",
+            "none 检索得到 0 个片段",
+            "资料问答模式未找到证据，未调用回答模型；可补充资料或切换通用对话。",
+            "候选记忆提取未开启。"
+          ],
+          "verification": "no_evidence",
+          "seconds": 0.087
+        }
+      },
+      {
+        "name": "real_embedding_configuration",
+        "passed": true,
+        "details": {
+          "custom": true,
+          "keyConfigured": true,
+          "baseUrl": "https://www.dmxapi.cn/v1",
+          "model": "bge-m3",
+          "allowedHosts": [
+            "api.deepseek.com",
+            "api.moonshot.cn",
+            "api.openai.com",
+            "api.siliconflow.cn",
+            "dashscope-intl.aliyuncs.com",
+            "dashscope.aliyuncs.com",
+            "open.bigmodel.cn",
+            "www.dmxapi.cn"
+          ],
+          "minSimilarity": 0.55
+        }
+      },
+      {
+        "name": "semantic_paraphrase",
+        "passed": true,
+        "details": {
+          "answer": "根据参考数据 [M1]，本次采购预算的资金上限为 7300 元，因此花费最多能到 7300 元。",
+          "sources": [],
+          "memories": [
+            {
+              "id": "1e5897a0-d790-4aa8-ab66-e46dfbc25515",
+              "title": "采购预算",
+              "content": "本项目采购资金上限为 7300 元。",
+              "kind": "fact",
+              "updatedAt": "2026-10-06T14:03:01.468304742Z"
+            }
+          ],
+          "trace": [
+            "BM25 + 向量 · RRF",
+            "读取最近 0 条会话消息",
+            "召回 1 条长期记忆",
+            "none 检索得到 0 个片段",
+            "引用编号有效；已进行模型证据核验，仍需结合来源判断。",
+            "候选记忆提取未开启。"
+          ],
+          "verification": "model_checked",
+          "seconds": 6.465
+        }
+      },
+      {
+        "name": "updated_memory_no_stale_vector",
+        "passed": true,
+        "details": {
+          "answer": "根据参考数据 [M1]，本项目采购资金上限更新为 9000 元，因此花费最多能到 9000 元。",
+          "sources": [],
+          "memories": [
+            {
+              "id": "1e5897a0-d790-4aa8-ab66-e46dfbc25515",
+              "title": "采购预算",
+              "content": "本项目采购资金上限更新为 9000 元。",
+              "kind": "fact",
+              "updatedAt": "2026-10-06T14:03:08.027955147Z"
+            }
+          ],
+          "trace": [
+            "BM25 + 向量 · RRF",
+            "读取最近 0 条会话消息",
+            "召回 1 条长期记忆",
+            "none 检索得到 0 个片段",
+            "引用编号有效；已进行模型证据核验，仍需结合来源判断。",
+            "候选记忆提取未开启。"
+          ],
+          "verification": "model_checked",
+          "seconds": 7.077
+        }
+      },
+      {
+        "name": "workspace_and_embedding_isolation",
+        "passed": true,
+        "details": {
+          "answer": "不知道。目前没有足够的可用依据。请补充或保存相关资料；如果有多个项目，请说明你指哪一个。",
+          "sources": [],
+          "memories": [],
+          "trace": [
+            "关键词 BM25",
+            "读取最近 0 条会话消息",
+            "召回 0 条长期记忆",
+            "none 检索得到 0 个片段",
+            "资料问答模式未找到证据，未调用回答模型；可补充资料或切换通用对话。",
+            "候选记忆提取未开启。"
+          ],
+          "verification": "no_evidence",
+          "seconds": 0.044
+        }
+      },
+      {
+        "name": "document_citation",
+        "passed": true,
+        "details": {
+          "answer": "根据资料 [K1]，资料归档室的检索编号是 DOC-519d157114。",
+          "sources": [
+            {
+              "id": "K1",
+              "title": "资料归档室",
+              "content": "资料归档室的检索编号为 DOC-519d157114。",
+              "provider": "local",
+              "score": 0.03278688524590164
+            }
+          ],
+          "memories": [],
+          "trace": [
+            "BM25 + 向量 · RRF",
+            "读取最近 0 条会话消息",
+            "召回 0 条长期记忆",
+            "local 检索得到 1 个片段",
+            "引用编号有效；已进行模型证据核验，仍需结合来源判断。",
+            "候选记忆提取未开启。"
+          ],
+          "verification": "model_checked",
+          "seconds": 5.439
+        }
+      },
+      {
+        "name": "invalid_citation_never_exposed",
+        "passed": true,
+        "details": {
+          "answer": "不知道。目前没有足够的可用依据。请补充或保存相关资料；如果有多个项目，请说明你指哪一个。",
+          "sources": [],
+          "memories": [],
+          "trace": [
+            "关键词 BM25",
+            "读取最近 0 条会话消息",
+            "召回 0 条长期记忆",
+            "none 检索得到 0 个片段",
+            "回答包含不存在的引用，已拦截。",
+            "候选记忆提取未开启。"
+          ],
+          "verification": "blocked",
+          "seconds": 3.798
+        }
+      },
+      {
+        "name": "review_before_memory_update",
+        "passed": true,
+        "details": {
+          "proposals": [
+            {
+              "id": "81d8f3ae-3893-4c16-9359-4a412850c448",
+              "before": {
+                "id": "1e5897a0-d790-4aa8-ab66-e46dfbc25515",
+                "title": "采购预算",
+                "content": "本项目采购资金上限为 7300 元。",
+                "kind": "fact",
+                "updatedAt": "2026-10-06T14:03:24.663233026Z"
+              },
+              "title": "采购预算",
+              "content": "本项目采购资金上限为 9000 元。",
+              "kind": "fact",
+              "sourceQuote": "我的采购预算现在改为 9000 元，替代以前的 7300 元",
+              "createdAt": "2026-10-06T14:03:35.776489868Z"
+            }
+          ],
+          "trace": [
+            "BM25 + 向量 · RRF",
+            "读取最近 0 条会话消息",
+            "召回 1 条长期记忆",
+            "none 检索得到 0 个片段",
+            "通用对话：仅校验引用编号，未做事实支持核验。",
+            "已检查候选记忆；到记忆空间审核，确认前不会加入长期记忆。"
+          ]
+        }
+      },
+      {
+        "name": "approve_with_provenance",
+        "passed": true,
+        "details": {
+          "id": "bc3cdfcf-ed4d-4b8b-ba19-daffe43c34b4",
+          "before": {
+            "id": "1e5897a0-d790-4aa8-ab66-e46dfbc25515",
+            "title": "采购预算",
+            "content": "本项目采购资金上限为 7300 元。",
+            "kind": "fact",
+            "updatedAt": "2026-10-06T14:03:24.663233026Z"
+          },
+          "after": {
+            "id": "1e5897a0-d790-4aa8-ab66-e46dfbc25515",
+            "title": "采购预算",
+            "content": "本项目采购资金上限为 9000 元。",
+            "kind": "fact",
+            "updatedAt": "2026-10-06T14:03:35.852301253Z"
+          },
+          "sourceQuote": "我的采购预算现在改为 9000 元，替代以前的 7300 元",
+          "changedAt": "2026-10-06T14:03:35.852659278Z",
+          "undone": false
+        }
+      },
+      {
+        "name": "undo_restores_prior_memory",
+        "passed": true,
+        "details": [
+          {
+            "id": "1e5897a0-d790-4aa8-ab66-e46dfbc25515",
+            "title": "采购预算",
+            "content": "本项目采购资金上限为 7300 元。",
+            "kind": "fact",
+            "updatedAt": "2026-10-06T14:03:35.895919682Z"
+          }
+        ]
+      },
+      {
+        "name": "forget_purges_versions_and_recall",
+        "passed": true,
+        "details": {
+          "answer": "不知道。目前没有足够的可用依据。请补充或保存相关资料；如果有多个项目，请说明你指哪一个。",
+          "sources": [],
+          "memories": [],
+          "trace": [
+            "关键词 BM25",
+            "读取最近 0 条会话消息",
+            "召回 0 条长期记忆",
+            "none 检索得到 0 个片段",
+            "资料问答模式未找到证据，未调用回答模型；可补充资料或切换通用对话。",
+            "候选记忆提取未开启。"
+          ],
+          "verification": "no_evidence",
+          "seconds": 0.028
+        }
+      },
+      {
+        "name": "disable_semantic_credentials",
+        "passed": true,
+        "details": {
+          "custom": false,
+          "keyConfigured": false,
+          "baseUrl": "",
+          "model": "",
+          "allowedHosts": [
+            "api.deepseek.com",
+            "api.moonshot.cn",
+            "api.openai.com",
+            "api.siliconflow.cn",
+            "dashscope-intl.aliyuncs.com",
+            "dashscope.aliyuncs.com",
+            "open.bigmodel.cn",
+            "www.dmxapi.cn"
+          ],
+          "minSimilarity": 0.55
+        }
+      }
+    ],
+    "scope": "Single-run synthetic acceptance checks; verifier is not proof of factual correctness",
+    "cleanup": {
+      "synthetic_workspaces": 2,
+      "files_removed": 4
+    },
+    "passed": 12,
+    "total": 12,
+    "finished_at": "2026-10-06T22:03:36.132988+08:00"
+  },
+  "default_model_compatibility": {
+    "model": "gpt-4.1-mini",
+    "passed": true,
+    "result": {
+      "answer": "采购预算是 7300 元。依据是参考数据中的记忆片段 [M1]。",
+      "sources": [],
+      "memories": [
+        {
+          "id": "b5913959-cd7a-4c60-afbd-c2462895ed97",
+          "title": "采购预算",
+          "content": "本次采购预算为 7300 元。",
+          "kind": "fact",
+          "updatedAt": "2026-10-06T14:04:46.688242221Z"
+        }
+      ],
+      "trace": [
+        "关键词 BM25",
+        "读取最近 0 条会话消息",
+        "召回 1 条长期记忆",
+        "none 检索得到 0 个片段",
+        "引用编号有效；已进行模型证据核验，仍需结合来源判断。",
+        "候选记忆提取未开启。"
+      ],
+      "verification": "model_checked"
+    }
+  },
+  "limitations": [
+    "Synthetic single-run checks, not a general accuracy benchmark.",
+    "Model-based evidence verification can misjudge; valid citation IDs do not prove source truth.",
+    "Vector search and candidate extraction require explicit per-workspace setup.",
+    "No external Dify/RAGFlow live validation, independent reranker, temporal graph queries or concurrency benchmark."
+  ]
+}
