@@ -47,3 +47,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Python evaluation helpers ###
+__pycache__/
+*.pyc

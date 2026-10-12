@@ -1,0 +1,21 @@
+{
+  "version": "1.0",
+  "model": "DMXAPI-deepseek-v4-flash",
+  "seed": 20261012,
+  "repeats": 2,
+  "case_count": 24,
+  "max_requests": 96,
+  "max_tokens": 650,
+  "temperature": 0,
+  "primary_metric": "Exact match of all defect labels per scheduled case-run; format, transport and missing results count as incorrect.",
+  "secondary_metrics": [
+    "micro defect recall",
+    "micro defect precision",
+    "false alarms on clean cases",
+    "valid output rate",
+    "mean latency",
+    "reported token usage"
+  ],
+  "design": "Same model, task, observation and output schema in both arms. The skill arm additionally receives the frozen SKILL.md body and failure-modes reference. One independent request per observation; no conversation history. Each pair runs back to back with seeded random arm order. No automatic retries or post-result tuning.",
+  "limits": "24 author-constructed Chinese synthetic traces, not a public benchmark or blind external holdout. Two repetitions per case are correlated; bootstrap is clustered by the 24 cases. Tests explicit guidance loading only, not tool-use or trigger accuracy. Model route supplied by DMXAPI; underlying model identity is not independently verified. No estimate of monetary cost."
+}

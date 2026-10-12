@@ -1,2 +1,8 @@
 /mvnw text eol=lf
 *.cmd text eol=crlf
+
+# Preserve frozen evaluation inputs across platforms.
+skills/recall-eval/** text eol=lf
+docs/skill-evaluation-20261012/*.json text eol=lf
+docs/skill-evaluation-20261012/*.jsonl text eol=lf
+docs/skill-evaluation-20261012/*.sha256 text eol=lf

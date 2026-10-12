@@ -1,0 +1,2577 @@
+{
+  "arms": {
+    "baseline": {
+      "by_defect": {
+        "citation_error": {
+          "fn": 2,
+          "fp": 1,
+          "tp": 8
+        },
+        "execution_failure": {
+          "fn": 0,
+          "fp": 0,
+          "tp": 4
+        },
+        "isolation_leak": {
+          "fn": 0,
+          "fp": 0,
+          "tp": 4
+        },
+        "memory_write_error": {
+          "fn": 0,
+          "fp": 0,
+          "tp": 8
+        },
+        "retrieval_miss": {
+          "fn": 2,
+          "fp": 0,
+          "tp": 2
+        },
+        "unsupported_answer": {
+          "fn": 0,
+          "fp": 1,
+          "tp": 10
+        }
+      },
+      "clean_case_runs": 14,
+      "clean_false_alarm_pct": 14.2857,
+      "clean_false_alarms": 2,
+      "clean_invalid_or_missing": 0,
+      "correct": 42,
+      "exact_match_pct": 87.5,
+      "false_positive_defects": 2,
+      "mean_latency_seconds": 3.327,
+      "micro_defect_precision_pct": 94.7368,
+      "micro_defect_recall_pct": 90.0,
+      "missed_defects": 4,
+      "reported_usage_totals": {
+        "completion_tokens": 2354,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 31330,
+        "prompt_tokens": 31330,
+        "total_tokens": 33684
+      },
+      "scheduled": 48,
+      "true_positive_defects": 36,
+      "valid_output_pct": 100.0,
+      "valid_outputs": 48
+    },
+    "skill": {
+      "by_defect": {
+        "citation_error": {
+          "fn": 2,
+          "fp": 0,
+          "tp": 8
+        },
+        "execution_failure": {
+          "fn": 0,
+          "fp": 0,
+          "tp": 4
+        },
+        "isolation_leak": {
+          "fn": 0,
+          "fp": 0,
+          "tp": 4
+        },
+        "memory_write_error": {
+          "fn": 0,
+          "fp": 0,
+          "tp": 8
+        },
+        "retrieval_miss": {
+          "fn": 0,
+          "fp": 2,
+          "tp": 4
+        },
+        "unsupported_answer": {
+          "fn": 0,
+          "fp": 0,
+          "tp": 10
+        }
+      },
+      "clean_case_runs": 14,
+      "clean_false_alarm_pct": 14.2857,
+      "clean_false_alarms": 2,
+      "clean_invalid_or_missing": 0,
+      "correct": 44,
+      "exact_match_pct": 91.6667,
+      "false_positive_defects": 2,
+      "mean_latency_seconds": 3.325,
+      "micro_defect_precision_pct": 95.0,
+      "micro_defect_recall_pct": 95.0,
+      "missed_defects": 2,
+      "reported_usage_totals": {
+        "completion_tokens": 2454,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 89890,
+        "prompt_tokens": 89890,
+        "total_tokens": 92344
+      },
+      "scheduled": 48,
+      "true_positive_defects": 38,
+      "valid_output_pct": 100.0,
+      "valid_outputs": 48
+    }
+  },
+  "attempted_requests": 96,
+  "case_cluster_bootstrap_95pct_interval_pp": [
+    0.0,
+    12.5
+  ],
+  "exact_match_delta_percentage_points": 4.1667,
+  "finished_requests": 96,
+  "interpretation": "Descriptive synthetic-set ablation, not a population guarantee. The bootstrap only reflects these 24 case clusters. Labels are authored expectations, not an independent audit. Guidance and cases were designed by the same author. Model reasoning evidence is retained but not semantically scored; exact match grades label sets only.",
+  "manifest_sha256": "2b1b5bd528c0e188f10c908c9b8d39b10d3388fdd84c873530baa6786b0bce48",
+  "paired": {
+    "both_correct": 42,
+    "both_wrong": 4,
+    "improved": 2,
+    "regressed": 0
+  },
+  "protocol": {
+    "case_count": 24,
+    "design": "Same model, task, observation and output schema in both arms. The skill arm additionally receives the frozen SKILL.md body and failure-modes reference. One independent request per observation; no conversation history. Each pair runs back to back with seeded random arm order. No automatic retries or post-result tuning.",
+    "limits": "24 author-constructed Chinese synthetic traces, not a public benchmark or blind external holdout. Two repetitions per case are correlated; bootstrap is clustered by the 24 cases. Tests explicit guidance loading only, not tool-use or trigger accuracy. Model route supplied by DMXAPI; underlying model identity is not independently verified. No estimate of monetary cost.",
+    "max_requests": 96,
+    "max_tokens": 650,
+    "model": "DMXAPI-deepseek-v4-flash",
+    "primary_metric": "Exact match of all defect labels per scheduled case-run; format, transport and missing results count as incorrect.",
+    "repeats": 2,
+    "secondary_metrics": [
+      "micro defect recall",
+      "micro defect precision",
+      "false alarms on clean cases",
+      "valid output rate",
+      "mean latency",
+      "reported token usage"
+    ],
+    "seed": 20261012,
+    "temperature": 0,
+    "version": "1.0"
+  },
+  "reported_models": [
+    "deepseek-v4-flash"
+  ],
+  "rows": [
+    {
+      "arm": "skill",
+      "case_id": "C16",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "isolation_leak"
+      ],
+      "id": "C16-r1-skill",
+      "latency_seconds": 3.852,
+      "predicted": [
+        "isolation_leak"
+      ],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 48,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1885,
+        "prompt_tokens": 1885,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 1933
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C16",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "isolation_leak"
+      ],
+      "id": "C16-r1-baseline",
+      "latency_seconds": 3.936,
+      "predicted": [
+        "isolation_leak"
+      ],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 47,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 665,
+        "prompt_tokens": 665,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 712
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C06",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "isolation_leak"
+      ],
+      "id": "C06-r1-baseline",
+      "latency_seconds": 3.215,
+      "predicted": [
+        "isolation_leak"
+      ],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 48,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 639,
+        "prompt_tokens": 639,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 687
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C06",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "isolation_leak"
+      ],
+      "id": "C06-r1-skill",
+      "latency_seconds": 3.333,
+      "predicted": [
+        "isolation_leak"
+      ],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 47,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1859,
+        "prompt_tokens": 1859,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 1906
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C24",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "insufficient_evidence"
+      ],
+      "id": "C24-r1-baseline",
+      "latency_seconds": 2.632,
+      "predicted": [
+        "insufficient_evidence"
+      ],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 34,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 534,
+        "prompt_tokens": 534,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 568
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C24",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "insufficient_evidence"
+      ],
+      "id": "C24-r1-skill",
+      "latency_seconds": 2.932,
+      "predicted": [
+        "insufficient_evidence"
+      ],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 38,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1754,
+        "prompt_tokens": 1754,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 1792
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C10",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "unsupported_answer"
+      ],
+      "id": "C10-r1-baseline",
+      "latency_seconds": 4.474,
+      "predicted": [
+        "unsupported_answer"
+      ],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 76,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 649,
+        "prompt_tokens": 649,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 725
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C10",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "unsupported_answer"
+      ],
+      "id": "C10-r1-skill",
+      "latency_seconds": 4.442,
+      "predicted": [
+        "unsupported_answer"
+      ],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 75,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1869,
+        "prompt_tokens": 1869,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 1944
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C13",
+      "error": null,
+      "exact": true,
+      "expected": [],
+      "id": "C13-r1-skill",
+      "latency_seconds": 2.219,
+      "predicted": [],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 28,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1935,
+        "prompt_tokens": 1935,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 1963
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C13",
+      "error": null,
+      "exact": true,
+      "expected": [],
+      "id": "C13-r1-baseline",
+      "latency_seconds": 2.725,
+      "predicted": [],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 28,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 715,
+        "prompt_tokens": 715,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 743
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C15",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "memory_write_error"
+      ],
+      "id": "C15-r1-baseline",
+      "latency_seconds": 3.035,
+      "predicted": [
+        "memory_write_error"
+      ],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 44,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 621,
+        "prompt_tokens": 621,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 665
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C15",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "memory_write_error"
+      ],
+      "id": "C15-r1-skill",
+      "latency_seconds": 3.273,
+      "predicted": [
+        "memory_write_error"
+      ],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 39,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1841,
+        "prompt_tokens": 1841,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 1880
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C05",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "execution_failure"
+      ],
+      "id": "C05-r1-skill",
+      "latency_seconds": 3.219,
+      "predicted": [
+        "execution_failure"
+      ],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 52,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1826,
+        "prompt_tokens": 1826,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 1878
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C05",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "execution_failure"
+      ],
+      "id": "C05-r1-baseline",
+      "latency_seconds": 3.142,
+      "predicted": [
+        "execution_failure"
+      ],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 42,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 606,
+        "prompt_tokens": 606,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 648
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C20",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "unsupported_answer"
+      ],
+      "id": "C20-r1-skill",
+      "latency_seconds": 4.398,
+      "predicted": [
+        "unsupported_answer"
+      ],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 51,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1999,
+        "prompt_tokens": 1999,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 2050
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C20",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "unsupported_answer"
+      ],
+      "id": "C20-r1-baseline",
+      "latency_seconds": 3.867,
+      "predicted": [
+        "unsupported_answer"
+      ],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 79,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 779,
+        "prompt_tokens": 779,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 858
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C12",
+      "error": null,
+      "exact": false,
+      "expected": [],
+      "id": "C12-r1-baseline",
+      "latency_seconds": 3.125,
+      "predicted": [
+        "citation_error"
+      ],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 43,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 644,
+        "prompt_tokens": 644,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 687
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C12",
+      "error": null,
+      "exact": false,
+      "expected": [],
+      "id": "C12-r1-skill",
+      "latency_seconds": 3.859,
+      "predicted": [
+        "retrieval_miss"
+      ],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 79,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1864,
+        "prompt_tokens": 1864,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 1943
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C11",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "citation_error"
+      ],
+      "id": "C11-r1-baseline",
+      "latency_seconds": 3.293,
+      "predicted": [
+        "citation_error"
+      ],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 44,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 774,
+        "prompt_tokens": 774,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 818
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C11",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "citation_error"
+      ],
+      "id": "C11-r1-skill",
+      "latency_seconds": 3.013,
+      "predicted": [
+        "citation_error"
+      ],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 47,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1994,
+        "prompt_tokens": 1994,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 2041
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C09",
+      "error": null,
+      "exact": false,
+      "expected": [
+        "citation_error",
+        "retrieval_miss",
+        "unsupported_answer"
+      ],
+      "id": "C09-r1-baseline",
+      "latency_seconds": 4.016,
+      "predicted": [
+        "citation_error",
+        "unsupported_answer"
+      ],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 72,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 646,
+        "prompt_tokens": 646,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 718
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C09",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "citation_error",
+        "retrieval_miss",
+        "unsupported_answer"
+      ],
+      "id": "C09-r1-skill",
+      "latency_seconds": 5.138,
+      "predicted": [
+        "citation_error",
+        "retrieval_miss",
+        "unsupported_answer"
+      ],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 112,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1866,
+        "prompt_tokens": 1866,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 1978
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C04",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "citation_error"
+      ],
+      "id": "C04-r1-skill",
+      "latency_seconds": 3.05,
+      "predicted": [
+        "citation_error"
+      ],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 42,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1904,
+        "prompt_tokens": 1904,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 1946
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C04",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "citation_error"
+      ],
+      "id": "C04-r1-baseline",
+      "latency_seconds": 2.368,
+      "predicted": [
+        "citation_error"
+      ],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 30,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 684,
+        "prompt_tokens": 684,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 714
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C19",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "citation_error",
+        "unsupported_answer"
+      ],
+      "id": "C19-r1-baseline",
+      "latency_seconds": 3.684,
+      "predicted": [
+        "citation_error",
+        "unsupported_answer"
+      ],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 67,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 741,
+        "prompt_tokens": 741,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 808
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C19",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "citation_error",
+        "unsupported_answer"
+      ],
+      "id": "C19-r1-skill",
+      "latency_seconds": 3.587,
+      "predicted": [
+        "citation_error",
+        "unsupported_answer"
+      ],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 63,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1961,
+        "prompt_tokens": 1961,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 2024
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C21",
+      "error": null,
+      "exact": true,
+      "expected": [],
+      "id": "C21-r1-skill",
+      "latency_seconds": 2.515,
+      "predicted": [],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 31,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1896,
+        "prompt_tokens": 1896,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 1927
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C21",
+      "error": null,
+      "exact": true,
+      "expected": [],
+      "id": "C21-r1-baseline",
+      "latency_seconds": 4.793,
+      "predicted": [],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 46,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 676,
+        "prompt_tokens": 676,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 722
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C07",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "memory_write_error"
+      ],
+      "id": "C07-r1-skill",
+      "latency_seconds": 3.496,
+      "predicted": [
+        "memory_write_error"
+      ],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 48,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1797,
+        "prompt_tokens": 1797,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 1845
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C07",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "memory_write_error"
+      ],
+      "id": "C07-r1-baseline",
+      "latency_seconds": 3.423,
+      "predicted": [
+        "memory_write_error"
+      ],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 52,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 577,
+        "prompt_tokens": 577,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 629
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C08",
+      "error": null,
+      "exact": true,
+      "expected": [],
+      "id": "C08-r1-baseline",
+      "latency_seconds": 3.6,
+      "predicted": [],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 31,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 569,
+        "prompt_tokens": 569,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 600
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C08",
+      "error": null,
+      "exact": true,
+      "expected": [],
+      "id": "C08-r1-skill",
+      "latency_seconds": 2.364,
+      "predicted": [],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 34,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1789,
+        "prompt_tokens": 1789,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 1823
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C03",
+      "error": null,
+      "exact": false,
+      "expected": [
+        "citation_error",
+        "unsupported_answer"
+      ],
+      "id": "C03-r1-skill",
+      "latency_seconds": 3.386,
+      "predicted": [
+        "unsupported_answer"
+      ],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 51,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1926,
+        "prompt_tokens": 1926,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 1977
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C03",
+      "error": null,
+      "exact": false,
+      "expected": [
+        "citation_error",
+        "unsupported_answer"
+      ],
+      "id": "C03-r1-baseline",
+      "latency_seconds": 4.058,
+      "predicted": [
+        "unsupported_answer"
+      ],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 51,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 706,
+        "prompt_tokens": 706,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 757
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C17",
+      "error": null,
+      "exact": true,
+      "expected": [],
+      "id": "C17-r1-baseline",
+      "latency_seconds": 2.606,
+      "predicted": [],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 31,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 664,
+        "prompt_tokens": 664,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 695
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C17",
+      "error": null,
+      "exact": true,
+      "expected": [],
+      "id": "C17-r1-skill",
+      "latency_seconds": 2.804,
+      "predicted": [],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 42,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1884,
+        "prompt_tokens": 1884,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 1926
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C18",
+      "error": null,
+      "exact": true,
+      "expected": [],
+      "id": "C18-r1-baseline",
+      "latency_seconds": 3.048,
+      "predicted": [],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 41,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 596,
+        "prompt_tokens": 596,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 637
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C18",
+      "error": null,
+      "exact": true,
+      "expected": [],
+      "id": "C18-r1-skill",
+      "latency_seconds": 2.344,
+      "predicted": [],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 26,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1816,
+        "prompt_tokens": 1816,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 1842
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C22",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "execution_failure"
+      ],
+      "id": "C22-r1-skill",
+      "latency_seconds": 3.081,
+      "predicted": [
+        "execution_failure"
+      ],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 59,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1897,
+        "prompt_tokens": 1897,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 1956
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C22",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "execution_failure"
+      ],
+      "id": "C22-r1-baseline",
+      "latency_seconds": 3.73,
+      "predicted": [
+        "execution_failure"
+      ],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 49,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 677,
+        "prompt_tokens": 677,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 726
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C23",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "memory_write_error"
+      ],
+      "id": "C23-r1-baseline",
+      "latency_seconds": 3.018,
+      "predicted": [
+        "memory_write_error"
+      ],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 52,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 669,
+        "prompt_tokens": 669,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 721
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C23",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "memory_write_error"
+      ],
+      "id": "C23-r1-skill",
+      "latency_seconds": 3.37,
+      "predicted": [
+        "memory_write_error"
+      ],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 52,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1889,
+        "prompt_tokens": 1889,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 1941
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C02",
+      "error": null,
+      "exact": true,
+      "expected": [],
+      "id": "C02-r1-baseline",
+      "latency_seconds": 2.946,
+      "predicted": [],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 42,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 607,
+        "prompt_tokens": 607,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 649
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C02",
+      "error": null,
+      "exact": true,
+      "expected": [],
+      "id": "C02-r1-skill",
+      "latency_seconds": 3.703,
+      "predicted": [],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 63,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1827,
+        "prompt_tokens": 1827,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 1890
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C01",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "retrieval_miss"
+      ],
+      "id": "C01-r1-skill",
+      "latency_seconds": 3.34,
+      "predicted": [
+        "retrieval_miss"
+      ],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 66,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1882,
+        "prompt_tokens": 1882,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 1948
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C01",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "retrieval_miss"
+      ],
+      "id": "C01-r1-baseline",
+      "latency_seconds": 3.708,
+      "predicted": [
+        "retrieval_miss"
+      ],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 56,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 662,
+        "prompt_tokens": 662,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 718
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C14",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "memory_write_error"
+      ],
+      "id": "C14-r1-baseline",
+      "latency_seconds": 3.278,
+      "predicted": [
+        "memory_write_error"
+      ],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 60,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 565,
+        "prompt_tokens": 565,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 625
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C14",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "memory_write_error"
+      ],
+      "id": "C14-r1-skill",
+      "latency_seconds": 3.186,
+      "predicted": [
+        "memory_write_error"
+      ],
+      "repeat": 1,
+      "usage": {
+        "completion_tokens": 49,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1785,
+        "prompt_tokens": 1785,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 1834
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C10",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "unsupported_answer"
+      ],
+      "id": "C10-r2-baseline",
+      "latency_seconds": 3.222,
+      "predicted": [
+        "unsupported_answer"
+      ],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 51,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 649,
+        "prompt_tokens": 649,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 700
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C10",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "unsupported_answer"
+      ],
+      "id": "C10-r2-skill",
+      "latency_seconds": 4.157,
+      "predicted": [
+        "unsupported_answer"
+      ],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 77,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1869,
+        "prompt_tokens": 1869,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 1946
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C18",
+      "error": null,
+      "exact": true,
+      "expected": [],
+      "id": "C18-r2-baseline",
+      "latency_seconds": 3.18,
+      "predicted": [],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 54,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 596,
+        "prompt_tokens": 596,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 650
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C18",
+      "error": null,
+      "exact": true,
+      "expected": [],
+      "id": "C18-r2-skill",
+      "latency_seconds": 2.086,
+      "predicted": [],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 34,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1816,
+        "prompt_tokens": 1816,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 1850
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C05",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "execution_failure"
+      ],
+      "id": "C05-r2-skill",
+      "latency_seconds": 3.095,
+      "predicted": [
+        "execution_failure"
+      ],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 51,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1826,
+        "prompt_tokens": 1826,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 1877
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C05",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "execution_failure"
+      ],
+      "id": "C05-r2-baseline",
+      "latency_seconds": 2.97,
+      "predicted": [
+        "execution_failure"
+      ],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 43,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 606,
+        "prompt_tokens": 606,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 649
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C19",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "citation_error",
+        "unsupported_answer"
+      ],
+      "id": "C19-r2-skill",
+      "latency_seconds": 3.342,
+      "predicted": [
+        "citation_error",
+        "unsupported_answer"
+      ],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 59,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1961,
+        "prompt_tokens": 1961,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 2020
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C19",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "citation_error",
+        "unsupported_answer"
+      ],
+      "id": "C19-r2-baseline",
+      "latency_seconds": 4.035,
+      "predicted": [
+        "citation_error",
+        "unsupported_answer"
+      ],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 60,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 741,
+        "prompt_tokens": 741,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 801
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C12",
+      "error": null,
+      "exact": false,
+      "expected": [],
+      "id": "C12-r2-baseline",
+      "latency_seconds": 3.964,
+      "predicted": [
+        "unsupported_answer"
+      ],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 69,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 644,
+        "prompt_tokens": 644,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 713
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C12",
+      "error": null,
+      "exact": false,
+      "expected": [],
+      "id": "C12-r2-skill",
+      "latency_seconds": 4.23,
+      "predicted": [
+        "retrieval_miss"
+      ],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 73,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1864,
+        "prompt_tokens": 1864,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 1937
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C04",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "citation_error"
+      ],
+      "id": "C04-r2-skill",
+      "latency_seconds": 4.047,
+      "predicted": [
+        "citation_error"
+      ],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 41,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1904,
+        "prompt_tokens": 1904,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 1945
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C04",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "citation_error"
+      ],
+      "id": "C04-r2-baseline",
+      "latency_seconds": 2.926,
+      "predicted": [
+        "citation_error"
+      ],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 43,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 684,
+        "prompt_tokens": 684,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 727
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C21",
+      "error": null,
+      "exact": true,
+      "expected": [],
+      "id": "C21-r2-skill",
+      "latency_seconds": 3.06,
+      "predicted": [],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 45,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1896,
+        "prompt_tokens": 1896,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 1941
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C21",
+      "error": null,
+      "exact": true,
+      "expected": [],
+      "id": "C21-r2-baseline",
+      "latency_seconds": 3.278,
+      "predicted": [],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 45,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 676,
+        "prompt_tokens": 676,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 721
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C15",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "memory_write_error"
+      ],
+      "id": "C15-r2-skill",
+      "latency_seconds": 2.946,
+      "predicted": [
+        "memory_write_error"
+      ],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 39,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1841,
+        "prompt_tokens": 1841,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 1880
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C15",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "memory_write_error"
+      ],
+      "id": "C15-r2-baseline",
+      "latency_seconds": 3.615,
+      "predicted": [
+        "memory_write_error"
+      ],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 53,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 621,
+        "prompt_tokens": 621,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 674
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C20",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "unsupported_answer"
+      ],
+      "id": "C20-r2-baseline",
+      "latency_seconds": 3.405,
+      "predicted": [
+        "unsupported_answer"
+      ],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 60,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 779,
+        "prompt_tokens": 779,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 839
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C20",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "unsupported_answer"
+      ],
+      "id": "C20-r2-skill",
+      "latency_seconds": 3.092,
+      "predicted": [
+        "unsupported_answer"
+      ],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 50,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1999,
+        "prompt_tokens": 1999,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 2049
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C16",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "isolation_leak"
+      ],
+      "id": "C16-r2-skill",
+      "latency_seconds": 3.129,
+      "predicted": [
+        "isolation_leak"
+      ],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 52,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1885,
+        "prompt_tokens": 1885,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 1937
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C16",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "isolation_leak"
+      ],
+      "id": "C16-r2-baseline",
+      "latency_seconds": 3.076,
+      "predicted": [
+        "isolation_leak"
+      ],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 53,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 665,
+        "prompt_tokens": 665,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 718
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C06",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "isolation_leak"
+      ],
+      "id": "C06-r2-skill",
+      "latency_seconds": 3.039,
+      "predicted": [
+        "isolation_leak"
+      ],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 47,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1859,
+        "prompt_tokens": 1859,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 1906
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C06",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "isolation_leak"
+      ],
+      "id": "C06-r2-baseline",
+      "latency_seconds": 4.008,
+      "predicted": [
+        "isolation_leak"
+      ],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 49,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 639,
+        "prompt_tokens": 639,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 688
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C23",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "memory_write_error"
+      ],
+      "id": "C23-r2-skill",
+      "latency_seconds": 3.631,
+      "predicted": [
+        "memory_write_error"
+      ],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 47,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1889,
+        "prompt_tokens": 1889,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 1936
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C23",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "memory_write_error"
+      ],
+      "id": "C23-r2-baseline",
+      "latency_seconds": 3.651,
+      "predicted": [
+        "memory_write_error"
+      ],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 52,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 669,
+        "prompt_tokens": 669,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 721
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C01",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "retrieval_miss"
+      ],
+      "id": "C01-r2-baseline",
+      "latency_seconds": 3.385,
+      "predicted": [
+        "retrieval_miss"
+      ],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 56,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 662,
+        "prompt_tokens": 662,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 718
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C01",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "retrieval_miss"
+      ],
+      "id": "C01-r2-skill",
+      "latency_seconds": 3.821,
+      "predicted": [
+        "retrieval_miss"
+      ],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 65,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1882,
+        "prompt_tokens": 1882,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 1947
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C22",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "execution_failure"
+      ],
+      "id": "C22-r2-baseline",
+      "latency_seconds": 3.148,
+      "predicted": [
+        "execution_failure"
+      ],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 47,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 677,
+        "prompt_tokens": 677,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 724
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C22",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "execution_failure"
+      ],
+      "id": "C22-r2-skill",
+      "latency_seconds": 3.791,
+      "predicted": [
+        "execution_failure"
+      ],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 45,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1897,
+        "prompt_tokens": 1897,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 1942
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C14",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "memory_write_error"
+      ],
+      "id": "C14-r2-baseline",
+      "latency_seconds": 2.653,
+      "predicted": [
+        "memory_write_error"
+      ],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 31,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 565,
+        "prompt_tokens": 565,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 596
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C14",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "memory_write_error"
+      ],
+      "id": "C14-r2-skill",
+      "latency_seconds": 3.204,
+      "predicted": [
+        "memory_write_error"
+      ],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 49,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1785,
+        "prompt_tokens": 1785,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 1834
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C07",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "memory_write_error"
+      ],
+      "id": "C07-r2-baseline",
+      "latency_seconds": 2.995,
+      "predicted": [
+        "memory_write_error"
+      ],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 55,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 577,
+        "prompt_tokens": 577,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 632
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C07",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "memory_write_error"
+      ],
+      "id": "C07-r2-skill",
+      "latency_seconds": 3.729,
+      "predicted": [
+        "memory_write_error"
+      ],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 54,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1797,
+        "prompt_tokens": 1797,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 1851
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C11",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "citation_error"
+      ],
+      "id": "C11-r2-skill",
+      "latency_seconds": 3.504,
+      "predicted": [
+        "citation_error"
+      ],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 47,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1994,
+        "prompt_tokens": 1994,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 2041
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C11",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "citation_error"
+      ],
+      "id": "C11-r2-baseline",
+      "latency_seconds": 2.834,
+      "predicted": [
+        "citation_error"
+      ],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 40,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 774,
+        "prompt_tokens": 774,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 814
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C08",
+      "error": null,
+      "exact": true,
+      "expected": [],
+      "id": "C08-r2-skill",
+      "latency_seconds": 2.791,
+      "predicted": [],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 35,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1789,
+        "prompt_tokens": 1789,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 1824
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C08",
+      "error": null,
+      "exact": true,
+      "expected": [],
+      "id": "C08-r2-baseline",
+      "latency_seconds": 2.543,
+      "predicted": [],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 33,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 569,
+        "prompt_tokens": 569,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 602
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C03",
+      "error": null,
+      "exact": false,
+      "expected": [
+        "citation_error",
+        "unsupported_answer"
+      ],
+      "id": "C03-r2-skill",
+      "latency_seconds": 3.202,
+      "predicted": [
+        "unsupported_answer"
+      ],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 55,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1926,
+        "prompt_tokens": 1926,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 1981
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C03",
+      "error": null,
+      "exact": false,
+      "expected": [
+        "citation_error",
+        "unsupported_answer"
+      ],
+      "id": "C03-r2-baseline",
+      "latency_seconds": 2.823,
+      "predicted": [
+        "unsupported_answer"
+      ],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 51,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 706,
+        "prompt_tokens": 706,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 757
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C09",
+      "error": null,
+      "exact": false,
+      "expected": [
+        "citation_error",
+        "retrieval_miss",
+        "unsupported_answer"
+      ],
+      "id": "C09-r2-baseline",
+      "latency_seconds": 4.528,
+      "predicted": [
+        "citation_error",
+        "unsupported_answer"
+      ],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 72,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 646,
+        "prompt_tokens": 646,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 718
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C09",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "citation_error",
+        "retrieval_miss",
+        "unsupported_answer"
+      ],
+      "id": "C09-r2-skill",
+      "latency_seconds": 4.674,
+      "predicted": [
+        "citation_error",
+        "retrieval_miss",
+        "unsupported_answer"
+      ],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 106,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1866,
+        "prompt_tokens": 1866,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 1972
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C24",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "insufficient_evidence"
+      ],
+      "id": "C24-r2-skill",
+      "latency_seconds": 2.414,
+      "predicted": [
+        "insufficient_evidence"
+      ],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 34,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1754,
+        "prompt_tokens": 1754,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 1788
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C24",
+      "error": null,
+      "exact": true,
+      "expected": [
+        "insufficient_evidence"
+      ],
+      "id": "C24-r2-baseline",
+      "latency_seconds": 3.411,
+      "predicted": [
+        "insufficient_evidence"
+      ],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 52,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 534,
+        "prompt_tokens": 534,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 586
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C13",
+      "error": null,
+      "exact": true,
+      "expected": [],
+      "id": "C13-r2-baseline",
+      "latency_seconds": 2.229,
+      "predicted": [],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 28,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 715,
+        "prompt_tokens": 715,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 743
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C13",
+      "error": null,
+      "exact": true,
+      "expected": [],
+      "id": "C13-r2-skill",
+      "latency_seconds": 2.747,
+      "predicted": [],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 29,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1935,
+        "prompt_tokens": 1935,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 1964
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C02",
+      "error": null,
+      "exact": true,
+      "expected": [],
+      "id": "C02-r2-skill",
+      "latency_seconds": 3.093,
+      "predicted": [],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 36,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1827,
+        "prompt_tokens": 1827,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 1863
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C02",
+      "error": null,
+      "exact": true,
+      "expected": [],
+      "id": "C02-r2-baseline",
+      "latency_seconds": 3.119,
+      "predicted": [],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 38,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 607,
+        "prompt_tokens": 607,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 645
+      },
+      "valid": true
+    },
+    {
+      "arm": "skill",
+      "case_id": "C17",
+      "error": null,
+      "exact": true,
+      "expected": [],
+      "id": "C17-r2-skill",
+      "latency_seconds": 2.895,
+      "predicted": [],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 42,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1884,
+        "prompt_tokens": 1884,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 1926
+      },
+      "valid": true
+    },
+    {
+      "arm": "baseline",
+      "case_id": "C17",
+      "error": null,
+      "exact": true,
+      "expected": [],
+      "id": "C17-r2-baseline",
+      "latency_seconds": 2.998,
+      "predicted": [],
+      "repeat": 2,
+      "usage": {
+        "completion_tokens": 54,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 664,
+        "prompt_tokens": 664,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 718
+      },
+      "valid": true
+    }
+  ],
+  "scored_at": "2026-10-12T04:57:49Z",
+  "unique_cases": 24
+}

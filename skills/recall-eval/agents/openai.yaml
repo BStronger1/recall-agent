@@ -1,0 +1,4 @@
+interface:
+  display_name: "Recall 评测与诊断"
+  short_description: "诊断记忆与 RAG 的召回、生成及引用问题，运行固定对照评测并保留证据"
+  default_prompt: "Use $recall-eval to diagnose these Recall Agent traces and report evidence for each failure."
